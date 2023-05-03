@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Laptop Used Price</title>
+    <link type="text/css" rel="stylesheet" href="../static/style.css">
+
+
+</head>
+
+<body>
+
+<form class="my-form" id="my-form" method="POST">
+
+    <div class="container">
+        <h1 class="strokeme">DỰ ĐOÁN GIÁ LAPTOP CŨ</h1>
+        <ul>
+            <li>
+                <select name="brand" id="brand" required>
+                    <option value="">-- Chọn hãng--</option>
+                    <option value="Acer">Acer</option>
+                    <option value="Apple">Apple</option>
+                    <option value="Asus">Asus</option>
+                    <option value="Dell">Dell</option>
+                    <option value="HP">HP</option>
+                    <option value="Lenovo">Lenovo</option>
+                    <option value="MSI">MSI</option>
+                </select>
+            </li>
+            <li>
+                <select name="cpu_type" id="cpu" required>
+                    <option value="">-- Chọn CPU --</option>
+                    <option value="pentinum">Pentium</option>
+                    <option value="i3">i3</option>
+                    <option value="i5">i5</option>
+                    <option value="i7">i7</option>
+                    <option value="R5">R5</option>
+                    <option value="R7">R7</option>
+                </select>
+            </li>
+            <li>
+                <select name="gpu_type" id="gpu" required>
+                    <option value="">-- Chọn GPU --</option>
+                    <option value="Intel">Intel</option>
+                    <option value="NVIDIA GTX">NVIDIA GTX</option>
+                    <option value="NVIDIA MX">NVIDIA MX</option>
+                    <option value="NVIDIA Quadro">NVIDIA Quadro</option>
+                    <option value="NVIDIA RTX">NVIDIA RTX</option>
+                    <option value="Radeon">Radeon</option>
+                    <option value="AMD">AMD</option>
+                </select>
+            </li>
+            <li>
+                <select name="ram" id="ram" required>
+                    <option value="">-- Chọn dung lượng RAM --</option>
+                    <option value="4.0">4</option>
+                    <option value="8.0">8</option>
+                    <option value="16.0">16</option>
+                </select>
+            </li>
+            <li>
+                <select name="screen_size" id="screen" required>
+                    <option value="">-- Chọn kích thước màn hình --</option>
+                    <option value="11.6">11.6</option>
+                    <option value="12.0">12.0</option>
+                    <option value="13.0">13.0</option>
+                    <option value="13.3">13.3</option>
+                    <option value="13.4">13.4</option>
+                    <option value="13.5">13.5</option>
+                    <option value="13.9">13.9</option>
+                    <option value="14.0">14</option>
+                    <option value="15.6">15.6</option>
+                    <option value="16.0">16.0</option>
+                    <option value="17.3">17.3</option>
+                </select>
+            </li>
+            <li>
+                <select name="resolution" id="resolution" required>
+                    <option value="">-- Chọn độ phân giải --</option>
+                    <option value="1280 x 720">1280 x 720</option>
+                    <option value="1366 x 768">1366 x 768</option>
+                    <option value="1440 x 900">1440 x 900</option>
+                    <option value="1920 x 1080">1920 x 1080</option>
+                    <option value="1920 x 1200">1920 x 1200</option>
+                    <option value="2160 x 1350">2160 x 1350</option>
+                    <option value="2160 x 1440">2160 x 1440</option>
+                    <option value="2256 x 1504">2256 x 1504</option>
+                    <option value="2560 x 1440 ">2560 x 1440</option>
+                    <option value="2560 x 1600">2560 x 1600</option>
+                    <option value="2880 x 1800">2880 x 1800</option>
+                    <option value="3072 x 1920">3072 x 1920</option>
+                    <option value="3840 x 2160">3840 x 2160</option>
+                </select>
+            </li>
+            <li>
+                <select name="material" id="material" required>
+                    <option value="">-- Chọn chất liệu --</option>
+                    <option value="Nhựa">Nhựa</option>
+                    <option value="Nhựa + kim loại">Nhựa + kim loại</option>
+                    <option value="Kim loại">Kim loại</option>
+                </select>
+            </li>
+
+            <li class="radio">
+                <span>Màn hình cảm ứng:</span>
+
+                <input type="radio" id="organization" name="has_touchscreen" value="0" CHECKED>
+                <label for="organization"><span></span>Không</label>
+                <input type="radio" id="individual" name="has_touchscreen" value="1">
+                <label for="individual"><span></span>Có </label>
+
+            </li>
+            <li>
+                <div class="grid">
+
+                    <input type="number" step=0.01 min="0.89" max="2.9" placeholder="Trọng lượng" name="weight"
+                           id="weight"
+                           required>
+
+                </div>
+            </li>
+
+            <li>
+                <div class="grid grid-3">
+                    <div class="required-msg">Bắt Buộc</div>
+                    <button class="btn-grid" type="submit">
+                        <span>Dự đoán</span>
+                    </button>
+                    <button class="btn-grid" type="reset">
+                        <span>Chọn lại</span>
+                    </button>
+                </div>
+            </li>
+            <li>
+                <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+                <script type="text/javascript">
+                    $(document).on('submit', '#my-form', function (e) {
+                        e.preventDefault();
+                        // alert('hello');
+                        $.ajax({
+                            type: 'POST',
+                            url: '/',
+                            data: {
+                                "brand": $("#brand").val(),
+                                "cpu_type": $("#cpu").val(),
+                                "gpu_type": $("#gpu").val(),
+                                "ram": $("#ram").val(),
+                                "screen_size": $("#screen").val(),
+                                "resolution": $("#resolution").val(),
+                                "material": $("#material").val(),
+                                "has_touchscreen": $("input[type='radio'][name='has_touchscreen']:checked").val(),
+                                "weight": $("#weight").val()
+                            },
+                            success:
+                                function (data) {
+                                    // alert(data);
+                                    console.log(data);
+                                    $("#result").html(data)
+                                }
+                        })
+                    });
+
+
+                    $('#selectUl li:not(":first")').addClass('unselected');
+                    // Used to hide the 'unselected' elements in the ul.
+
+                    $('#selectUl').hover(
+                        function () {
+                            // mouse-over
+                            $(this).find('li').click(
+                                function () {
+                                    $('.unselected').removeClass('unselected');
+                                    // removes the 'unselected' style
+
+                                    $(this).siblings('li').addClass('unselected');
+                                    // adds 'unselected' style to all other li elements
+
+                                    var index = $(this).index();
+                                    $('select option:selected').removeAttr('selected');
+                                    // deselects the previously-chosen option in the select
+
+                                    $('select[name=size]')
+                                        .find('option:eq(' + index + ')')
+                                        .attr('selected', true);
+                                    // assumes a 1:1 relationship between the li and option elements
+                                });
+                        },
+                        function () {
+                            // mouseout (or mouseleave, if they're different, I can't remember).
+                        });
+
+
+                </script>
+            </li>
+        </ul>
+    </div>
+</form>
+<footer>
+    <div>
+        <small style="text-align: center !important; font-size: medium; font-weight: bolder" id="result">.</small>
+    </div>
+    <div class="container">
+        <small>Đồ án: Phân tích và trực quan dữ liệu
+        </small>
+    </div>
+</footer>
+</body>
+
+</html>
