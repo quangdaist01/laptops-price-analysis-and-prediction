@@ -12,6 +12,10 @@ Our main work includes:
 
 Our dataset contains 1234 rows and 35 features. After analyzing, we found that the most important features consists of brand, material, cpu_type, gpu_type, ram, has_touchscreen, weight, ppi. Our best model (Ridge Regression with 5th polonomial degree) achieves R2 score of 0.775 on the test set.
 
+## Architecture and tools
+![The architecture of our proposed system](./architecture_and_tools.png "The architecture of our proposed system")
+
+
 ## Note
 Beside collecting on thegioididong.com, at first, we have successfully scraped the laptops from some other websites:
 - dienmayxanh.com (new laptops): 144 rows, 31 features
