@@ -48,13 +48,17 @@ Despite the complexity problem mentioned in the paper, I purposely chose the two
 
 With the extra complexity of connecting data lake and data warehouse, I hoped I could painfully feel what the authors had presented 😂.
 
-![popular_architectures](images/popular_architectures.png)
+<p align="center">
+  <img src="https://github.com/quangdaist01/laptops-price-analysis-and-prediction/blob/master/images/popular_architectures.png?raw=true" alt="popular_architectures" width="800"/>
+</p>
 
 ## Tools
 
 A picture is worth a thousand words. Here are the tools I picked for this project:
 
-![architecture_and_tools](images/architecture_and_tools.png)
+<p align="center">
+  <img src="https://github.com/quangdaist01/laptops-price-analysis-and-prediction/blob/master/images/architecture_and_tools.png?raw=true" alt="architecture_and_tools" width="450"/>
+</p>
 
 ### Data lake → MinIO
 
@@ -142,7 +146,9 @@ I created a DAG file containing these Tasks:
 
 Here is the DAG graph:
 
-![DAG](images/DAG.png)
+<p align="center">
+  <img src="https://github.com/quangdaist01/laptops-price-analysis-and-prediction/blob/master/images/DAG.png?raw=true" alt="DAG.png" />
+</p>
 
 ### 3. Analyze data
 
