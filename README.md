@@ -1,12 +1,10 @@
-# Readme
-
-# Laptops price analysis and prediction on Thegioididong.com
+# Laptops price analysis and prediction on thegioididong.com
 
 ## **Overview**
 
-In this project, we collect, preprocess and analyze the the price of second-hand laptops on [thegioididong](https://www.thegioididong.com/may-doi-tra/laptop). We also build a simple model to predict the price of a used laptop based on our deduced important features. The deployment of the model is at [https://tgdd-laptop-price-prediction.herokuapp.com/](https://tgdd-laptop-price-prediction.herokuapp.com/) (it’s down)
+In this project, we collect, preprocess and analyze the the price of second-hand laptops on [thegioididong.com](https://www.thegioididong.com/may-doi-tra/laptop). We also build a simple model to predict the price of a used laptop based on our deduced important features. The deployment of the model is at [https://tgdd-laptop-price-prediction.herokuapp.com/](https://tgdd-laptop-price-prediction.herokuapp.com/) (it’s down)
 
-1. Scrape all laptops’ features on [thegioididong](https://www.thegioididong.com/may-doi-tra/laptop) (11:35, 28/10/2021). 
+1. Scrape all laptops’ features on [thegioididong.com](https://www.thegioididong.com/may-doi-tra/laptop) (11:35, 28/10/2021). 
 2. Data cleansing on the raw dataset 
 3. Transforming features based on the original ones 
 4. Performing EDA on the tidy dataset 
@@ -30,11 +28,11 @@ I think: “Man, you can’t put this ancient thing on your resume. Either upgra
 
 I chose the first solution since I didn’t have any attractive projects at that time.
 
-I was highly motivated when I came across this awesome post.
+I was highly motivated when I came across this awesome [post](https://www.sspaeti.com/blog/data-engineering-project-in-twenty-minutes/#ingesting-data-warehouse-for-low-latency--apache-druid).
 
 I love reasoning about every decision made to the system so I enjoyed (and learned) his post a lot.
 
-Based on his ideas and the core concepts in the book … , I upgraded this project by the following steps:
+Based on his ideas and the core concepts in the book [Fundamentals of Data Engineering](https://www.amazon.com/Fundamentals-Data-Engineering-Robust-Systems/dp/1098108302) , I upgraded this project by the following steps:
 
 1. Design the architecture.
 2. Choose the tools.
@@ -44,7 +42,7 @@ And the below sections are how I did it.
 
 ## **Architecture**
 
-According to …, there are 3 widely-used architecture for data platforms.
+According to this [paper](https://www.cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf), there are 3 widely-used architecture for data platforms.
 
 Despite the complexity problem mentioned in the paper, I purposely chose the two-tier data architecture (data lake + warehouse) because I want to get hands-on experience in as many popular data tools as possible.
 
@@ -88,24 +86,24 @@ I also installed the Kubernetes Dashboard for better resource management and tro
 
 Then I deployed Airflow and PosgreSQL on K8s pods.
 
-I had to make sure Airflow worker can access the databases residing on the PostgreSQL server in different pods. So I use the concepts of port-forwarding. I know there are better ways to do so. Check here …
+I had to make sure Airflow worker can access the databases residing on the PostgreSQL server in different pods. So I use the concepts of port-forwarding. I know there are better ways to do so. Check [here](https://github.com/quangdaist01/Real-time-people-counting-system-on-AWS-and-Confluent-Cloud).
 
 Adding the DAG files to the Airflow server on K8s was hard. It took me a while to use git-sync - a "sidecar" container in Kubernetes that helped me pull the DAGs files down from a repository (GitHub, in my case) so that I could run them on Airflow.
 
-The default Airflow image on … doesn’t contain enough packages required in this project so I had to build one manually. Luckily, `kind` supports loading images into my cluster. So I didn’t have to push it to DockerHub and pull it back onto the cluster, which should be a long, boring task.
+The default Airflow [image](https://hub.docker.com/r/apache/airflow) on DockerHub doesn’t contain enough packages required in this project so I had to build one manually. Fortunately, `kind` supports loading images into my cluster. So I didn’t have to push it to DockerHub and pull it back onto the cluster, which should be a long, boring task.
 
-- Install `docker`
-- Install `kind`
-- Install `helm`
-- Install `kubectl`
-- Install Kubernetes Dashboard
-- Deploy Airflow on K8s
-- Deploy PostgreSQL on K8s
-- Create PostgreSQL in Airflow
-- Enable git-sync in Airflow
-- Build custom Airflow image for additional packages
+1. Install `docker`
+1. Install `kind`
+1. Install `helm`
+1. Install `kubectl`
+1. Install Kubernetes Dashboard
+1. Deploy Airflow on K8s
+1. Deploy PostgreSQL on K8s
+1. Create PostgreSQL in Airflow
+1. Enable git-sync in Airflow
+1. Build custom Airflow image for additional packages
 
-### 1. Scrape all laptops’ features on [thegioididong](https://www.thegioididong.com/may-doi-tra/laptop)
+### 1. Scrape all laptops’ features on [thegioididong.com](https://www.thegioididong.com/may-doi-tra/laptop)
 
 The main page had changed a lot in the last 2 years, so I had to update almost all CSS selectors in the code. I didn’t scrape the id of each product back then so I added one in the new script. Each second-hand laptop is now associated with a unique id.
 
@@ -113,11 +111,11 @@ Then I manually uploaded the data on S3.
 
 Note: Besides collecting on thegioididong.com, we also scraped the laptops from some other websites. They can be used for further data integration in the future:
 
-- dienmayxanh.com (new laptops): 144 rows, 31 features
-- tiki.vn (new laptops): 104 rows, 41 features
-- fptshop.com.vn (new laptops): 144 rows, 67 features
-- gearvn.com (new laptops): 96 rows, 41 features
-- fptshop.com.vn (second-hand laptops): 28 rows, 69 features
+- [dienmayxanh.com](dienmayxanh.com) (new laptops): 144 rows, 31 features
+- [tiki.vn](tiki.vn) (new laptops): 104 rows, 41 features
+- [fptshop.com.vn](fptshop.com.vn) (new laptops): 144 rows, 67 features
+- [fptshop.com.vn](fptshop.com.vn) (second-hand laptops): 28 rows, 69 features
+- [gearvn.com](gearvn.com) (new laptops): 96 rows, 41 features
 
 ### 2. Clean & transform data
 
