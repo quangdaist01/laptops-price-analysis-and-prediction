@@ -24,7 +24,7 @@ alternative_names = \
      'Độ phân giải': 'resolution',
      'Tần số quét': "scan_frequency",
      'Công nghệ màn hình': 'screen_tech',
-     'Màn hình cảm ứng': 'has_touchscreen',
+     # 'Màn hình cảm ứng': 'has_touchscreen',
      'Card màn hình': 'gpu_type',
      'Công nghệ âm thanh': 'audio_tech',
      'Cổng giao tiếp': 'ports',
@@ -33,7 +33,7 @@ alternative_names = \
      'Webcam': 'webcam',
      'Tính năng khác': 'others',
      'Đèn bàn phím': 'has_lightning',
-     'Kích thước, trọng lượng': 'size_weight',
+     'Kích thước, khối lượng': 'size_weight',
      'Chất liệu': 'material',
      'Thông tin Pin': 'battery',
      'Hệ điều hành': 'os',
@@ -41,20 +41,23 @@ alternative_names = \
      }
 
 ordered_columns = \
-    ['brand', 'cpu_type', 'cpu_speed', 'max_cpu_speed', 'num_core', 'num_thread', 'cached_cpu',
+    ['id', 'name', 'brand', 'cpu_type', 'cpu_speed', 'max_cpu_speed', 'num_core', 'num_thread', 'cached_cpu',
      'gpu_type', 'ram_type', 'ram', 'max_ram', 'ram_speed', 'storage',
      'screen_size', 'resolution', 'scan_frequency', 'webcam', 'sd_slot', 'material', 'battery', 'os',
      'audio_tech', 'bluetooth_tech', 'wifi_tech', 'weight', 'thickness', 'width', 'length', 'released',
-     'has_lightning', 'has_thundebolt', 'has_touchscreen', 'has_fingerprint', 'has_camera_lock', 'has_180_degree',
+     'has_lightning', 'has_thunderbolt',
+     'has_fingerprint', 'has_camera_lock', 'has_180_degree',
      'has_face_id', 'has_antiglare',
      'saved_percent', 'saved_money', 'new_warranty', 'used_warranty', 'new_price', 'used_price']
+            # , 'is_sold']
 
 ordered_columns_step_2 = \
-    ['brand', 'cpu_type', 'cpu_speed', 'max_cpu_speed', 'num_core', 'num_thread', 'cached_cpu',
+    ['id', 'brand', 'cpu_type', 'cpu_speed', 'max_cpu_speed', 'num_core', 'num_thread', 'cached_cpu',
      'gpu_type', 'ram_type', 'ram', 'max_ram', 'ram_speed', 'storage',
      'screen_size', 'resolution', 'scan_frequency', 'webcam', 'num_sd_slot', 'material', 'battery', 'os',
      'audio_tech', 'bluetooth_tech', 'wifi_tech', 'weight', 'thickness', 'width', 'length', 'released', 'ppi',
-     'has_lightning', 'has_thundebolt', 'has_touchscreen', 'has_fingerprint', 'has_camera_lock', 'has_180_degree',
+     'has_lightning', 'has_thundebolt',
+     'has_fingerprint', 'has_camera_lock', 'has_180_degree',
      'has_face_id', 'has_antiglare',
      'saved_percent', 'saved_money', 'new_warranty', 'used_warranty', 'new_price', 'used_price']
 
@@ -82,7 +85,7 @@ def correct_dtypes(df):
     df['released'] = df['released'].astype('object')
     df['has_lightning'] = df['has_lightning'].astype('object')
     df['has_thundebolt'] = df['has_thundebolt'].astype('object')
-    df['has_touchscreen'] = df['has_touchscreen'].astype('object')
+    # df['has_touchscreen'] = df['has_touchscreen'].astype('object')
     df['has_fingerprint'] = df['has_fingerprint'].astype('object')
     df['has_camera_lock'] = df['has_camera_lock'].astype('object')
     df['has_180_degree'] = df['has_180_degree'].astype('object')
@@ -372,6 +375,8 @@ def preprocess_cpu_type(string_in):
             return 'R9'
         elif 'microsoft' in string_in:
             return 'Microsoft'
+        elif 'n4020' in string_in:
+            return 'N4020'
         else:
             # print(string_in)
             return np.nan
@@ -484,6 +489,7 @@ def preprocess_ram_speed(string_in):
 
     string_in = string_in.lower()
     bus = re.match(r'\d+ ?mhz', string_in)
+    bus = re.match(r'\d+', 'từ 2400 mhz (hãng công bố)')
     if bus:
         bus = int(bus.group().replace('mhz', ''))
     else:

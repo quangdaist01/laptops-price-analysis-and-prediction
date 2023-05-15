@@ -1,54 +1,99 @@
+import re
+import time
+
 import pandas as pd
 from Scrape.utils.base_class import BaseScraper
 from Scrape.utils import convert
+
+
+def extract_oldid_from_href(href):
+    # define the input string
+    input_str = href
+    # define the pattern to match
+    pattern = r"oldid=(\d+)&"
+    # find all matches
+    matches = re.findall(pattern, input_str)
+    # print the first match
+    return matches[0]
 
 
 class TGDD_Scraper(BaseScraper):
     def __init__(self):
         super(TGDD_Scraper, self).__init__(driver_type="edge")
         self.driver.get("https://www.thegioididong.com/may-doi-tra/laptop")
-        self._wait_and_click(".dong")
+        # self._wait_and_click(".dong")
+
+        # ------------ Count for testing
+        count = 1
+
         try:
             while True:
-                self._wait_and_click(".btnviewmoresp")
+                # self._wait_and_click(".btnviewmoresp")
+
+                if count == 0:
+                    break
+                count -= 1
+
+                try:
+                    from selenium.webdriver.common.action_chains import ActionChains
+                    element = self.driver.find_element_by_id(".view-more")
+                    actions = ActionChains(self.driver)
+                    actions.move_to_element(element).perform()
+                except:
+                    pass
+
+                self._wait_and_click(".view-more")
+                time.sleep(3)
+
+                # Try to click the close button of the pop up
+                try:
+                    self.driver.find_element_by_css_selector('.btnclose').click()
+                except:
+                    pass
         except:
-            self.laptops = self.driver.find_elements_by_css_selector('.products > li')
+            self.laptops = self.driver.find_elements_by_css_selector('div.prdItem')
+        self.laptops = self.driver.find_elements_by_css_selector('div.prdItem')
 
     def _parse_all_(self, sub_products):
 
         results = []
 
-        name = self.driver.find_element_by_css_selector(".titleimei > h1").text
+        name = self.driver.find_element_by_css_selector(".prdName").text
         for product in sub_products:
             try:
-                self._wait_to_be_clickable(".products > li")
+                # self._wait_to_be_clickable(".products > li")
 
-                result = {'Tên': name, "Giá máy cũ": product.find_element_by_css_selector("div:nth-child(2)").text}
+                result = {'Tên': name, "Giá máy cũ": product.find_element_by_css_selector(".price > strong").text}
+
+                # Trích id
+                href = product.find_element_by_css_selector(".prdItem > a").get_attribute("href")
+                result['id'] = extract_oldid_from_href(href)
 
                 # Trích tiết kiệm
-                discount = product.find_elements_by_css_selector('li > label:nth-child(3) > span')
+                discount = product.find_elements_by_css_selector('.prdInfo > p:nth-child(3) > span')
                 if discount:
                     result["Tiết kiệm"] = discount[0].text
                 else:
                     result["Tiết kiệm"] = ''
 
                 # Lấy thời gian bảo hành còn lại
-                used_info = product.find_elements_by_tag_name("label")
-                result["Bảo hành cũ"] = ""
-                for info in used_info:
-                    if "bảo hành:" in info.text.lower():
-                        result["Bảo hành cũ"] = info.text
+                used_info = product.find_elements_by_css_selector('.prdInfo > p:nth-child(1) > span')
+                if used_info:
+                    result["Bảo hành cũ"] = used_info[0].text
+                else:
+                    result["Bảo hành cũ"] = ''
 
                 results.append(result)
             except BaseException as e:
-                # raise e
-                failed_laptop = product.find_element_by_tag_name("img").get_attribute("alt")
-                results.append(failed_laptop)
+                raise e
+                # failed_laptop = product.find_element_by_tag_name("img").get_attribute("alt")
+                # results.append(failed_laptop)
         return results
 
     def _parse_base_info(self):
         # Chuyển sang tab máy mới
-        new_laptop_link = self.driver.find_element_by_link_text("Xem chi tiết máy mới").get_attribute("href")
+        new_laptop_link = self.driver.find_element_by_css_selector('.priceandurl > a').get_attribute("href")
+        # self._go_to_new_tab(link='https://www.thegioididong.com/' + new_laptop_link)
         self._go_to_new_tab(link=new_laptop_link)
 
         # Lấy giá máy mới
@@ -58,17 +103,17 @@ class TGDD_Scraper(BaseScraper):
         # Lấy bảo hành của máy mới
         try:
             warranty = self.driver.find_element_by_css_selector(
-                "ul.policy__list > li:nth-child(2) > p > b").text
+                    "ul.policy__list > li:nth-child(2) > p > b").text
             base_info["Bảo hành mới"] = warranty
         except:
-            print("")
+            pass
         try:
             warranty = self.driver.find_element_by_css_selector(".warranty")
             if warranty:
                 base_info["Bảo hành mới"] = warranty.text
         except:
             # print("Không tìm thấy thông tin bảo hành")
-            print("")
+            pass
 
         # Lấy phần trăm + số tiền tiết kiệm
         if "ngừng" in base_info["Giá máy mới"]:
@@ -100,22 +145,23 @@ class TGDD_Scraper(BaseScraper):
     def parse(self, *args, export=False) -> None:
         num_laptops = len(self.laptops)
         for index, laptop in enumerate(self.laptops):
+
             # if index == 2:
-            # self.driver.close()
+            #     self.driver.close()
+            #     break
             # print(f'Đã crawl xong 2 loại máy laptops.\n Cám ơn thầy đã xem')
-            # break
             try:
                 print(f'Crawling {index + 1}/{num_laptops}...')
                 self._go_to_new_tab(link=laptop.find_element_by_tag_name("a").get_attribute("href"))
-                sub_products = self.driver.find_elements_by_css_selector(".products > li")
+                sub_products = self.driver.find_elements_by_css_selector("div.lstProdsItem")
                 used_laptop_infos = self._parse_all_(sub_products)
                 new_laptop_info = self._parse_base_info()
                 result = self.combine_info(used_laptop_infos, new_laptop_info)
                 self._write(result)
 
             except BaseException as e:
-                # raise e
-                print("Lỗi load trang")
+                raise e
+                # print("Lỗi load trang")
             finally:
                 self.driver.close()
 
@@ -141,15 +187,21 @@ bot.parse(export=True)
 
 # %% Convert raw jsonlines to csv
 
-raw_data = convert.read_results("Scrape/TGDD_used/TGDD_used.jsonl")
+raw_data = convert.read_results("TGDD_used.jsonl")
 max_columns = convert.get_spec_fields(raw_data)
 df = convert.make_frame(raw_data, max_columns)
 df.to_csv("raw_data_TGDD_all_used.csv", index=False)
 
-# %%
+# # %%
+#
+# # Lấy trung bình giá cũ của các máy cùng loại
+# df = pd.read_csv("Dataset/Raw/raw_data_TGDD_used_renamed.csv")
+# df_take_first_occurence = df.groupby("name")[df.COLUMNS].first()
+#
+# df.to_csv("raw_data_TGDD_used.csv", index=False)
 
-# Lấy trung bình giá cũ của các máy cùng loại
-df = pd.read_csv("Dataset/Raw/raw_data_TGDD_used_renamed.csv")
-df_take_first_occurence = df.groupby("name")[df.COLUMNS].first()
+##
 
-df.to_csv("raw_data_TGDD_used.csv", index=False)
+
+##
+

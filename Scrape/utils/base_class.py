@@ -46,7 +46,7 @@ class BaseScraper(ABC):
         # _edge_options.add_argument("--incognito")
         # _edge_options.add_argument("--window-size=1920x1080")
         driver = webdriver.Edge(
-            executable_path="C:\\Users\\quang\\PycharmProjects\\laptops-price-analysis-and-prediction\\Scrape\\utils"
+            executable_path="C:\\Users\\MSI I5\\PycharmProjects\\laptops-price-analysis-and-prediction\\Scrape\\utils"
                             "\\msedgedriver.exe")
         return driver
 

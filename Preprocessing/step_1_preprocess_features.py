@@ -7,14 +7,18 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', -1)
 
-df = pd.read_csv("Dataset/Raw/raw_data_TGDD_used.csv")
+# df = pd.read_csv("Dataset/Raw/raw_data_TGDD_used.csv")
+df = pd.read_csv("raw_data_TGDD_all_used.csv")
 # Rename columns
 df = rename_columns(df, alternative_name=alternative_names)
 # Keep the first used laptop if there are many similar laptops
-df = remove_duplicate_laptops(df)
+# df = remove_duplicate_laptops(df)
+
+df_old = df.copy()
 
 # %% CLEANSING
 # Preprocess features
+# todo: Fix nhiều thuộc tính bị nan
 df["brand"] = df["name"].apply(preprocess_name)
 df["used_price"] = df["used_price"].apply(preprocess_used_price)
 df["new_price"] = df["new_price"].apply(preprocess_new_price)
@@ -35,9 +39,9 @@ df['has_lightning'] = df['has_lightning'].apply(preprocess_has_lightning)
 df['material'] = df['material'].apply(preprocess_material)
 df['new_warranty'] = df['new_warranty'].apply(preprocess_new_warranty)
 df["used_warranty"] = df["used_warranty"].apply(preprocess_used_warranty)
-df['has_thundebolt'] = df['ports'].apply(preprocess_thunderbolt)
+df['has_thunderbolt'] = df['ports'].apply(preprocess_thunderbolt)
 df['has_antiglare'] = df['screen_tech'].apply(preprocess_antiglare)
-df['has_touchscreen'] = df['has_touchscreen'].apply(preprocess_has_touchscreen)
+# df['has_touchscreen'] = df['has_touchscreen'].apply(preprocess_has_touchscreen)
 df['screen_size'] = df['screen_size'].apply(preprocess_screen_size)
 df["webcam"] = df["webcam"].apply(preprocess_webcam)
 df["battery"] = df["battery"].apply(preprocess_battery)
@@ -66,7 +70,8 @@ df['has_face_id'] = df['others'].apply(lambda s: preprocess_others(s)[3])
 
 # %%
 # Drop unused columns
-old_columns = ["name", "wireless", "size_weight", "ports", "screen_tech", "savings", 'others']
+# old_columns = ["name", "wireless", "size_weight", "ports", "screen_tech", "savings", 'others']
+old_columns = ["wireless", "size_weight", "ports", "screen_tech", "savings", 'others', 'Màn hình cảm ứng']
 df.drop(columns=old_columns, inplace=True)
 
 # Reoder columns
@@ -101,3 +106,5 @@ df.to_csv("Dataset/Tidy/1_dataset_renamed_preprocessed_dropped.csv", index=False
 #             print(row['name'])
 #             print(row['cpu_type'])
 #             print(row['used_price'])
+##
+
