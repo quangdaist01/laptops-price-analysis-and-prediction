@@ -1,7 +1,5 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-from Preprocessing.utils import ordered_columns_step_2
 
 plt.rcParams["font.family"] = "Times New Roman"
 

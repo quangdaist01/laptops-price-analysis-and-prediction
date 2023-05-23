@@ -1,7 +1,6 @@
 import re
 import time
 
-import pandas as pd
 from Scrape.utils.base_class import BaseScraper
 from Scrape.utils import convert
 

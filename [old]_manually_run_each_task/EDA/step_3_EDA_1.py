@@ -4,6 +4,7 @@ import seaborn as sns
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
 from Preprocessing.utils import correct_dtypes
+from scipy.stats import f_oneway
 
 plt.rcParams["font.family"] = "Times New Roman"
 
@@ -13,7 +14,7 @@ pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', -1)
 pd.options.display.max_rows
 
-# %%
+##
 
 df = pd.read_csv('Dataset/Tidy/3_dataset_reprocessed.csv')
 df = correct_dtypes(df)
@@ -22,11 +23,11 @@ quali_df = df.select_dtypes(include='object')
 quali_cols = quali_df.columns
 
 
-# %% md
+## md
 
 # MIỀN GIÁ TRỊ (BASIC INSIGHTS)
 
-# %%
+##
 # Barplot
 # Biến rời rạc
 
@@ -92,7 +93,7 @@ for column in quali_cols:
     plt.clf()
     # break
 
-# %%
+##
 
 # Distribution
 # Biến liên tục
@@ -125,7 +126,7 @@ for column in quanti_cols:
     plt.savefig(f'EDA/plots results/continuous/distribution_plot/{column}.png', bbox_inches='tight', dpi=250)
     plt.clf()
 
-# %%
+##
 # Pie chart
 for column in quali_df:
     plt.figure()
@@ -140,10 +141,10 @@ for column in quali_df:
     plt.savefig(f'EDA/plots results/categorical/pie_chart/{column}.png', bbox_inches='tight', dpi=250)
     plt.clf()
 
-# %% md
+## md
 # TƯƠNG QUAN (ĐƠN BIẾN)
 
-# %% Box plot (Biến rời rạc)
+## Box plot (Biến rời rạc)
 
 cate_p_value = pd.DataFrame({'feature': [], 'p_value': []})
 
@@ -205,26 +206,26 @@ for column in quali_cols:
     plt.savefig(f'EDA/plots results/categorical/box_plot/{column}.png', bbox_inches='tight', dpi=250)
     plt.clf()
 
-# %% one-way ANOVA
+## one-way ANOVA
 
-# def do_anova_on(df):
-#     """
-#     :param df:
-#     :return: Pandas series of p_values for categorical features versus dependent feature
-#     """
-#
-#     quali_cols = df.select_dtypes(include='object').columns
-#     p_values = {}
-#     for index, feature in enumerate(quali_cols):
-#         grouped = df.groupby(quali_cols[index])
-#         keys = list(grouped.groups.keys())
-#         anova_result = f_oneway(*[grouped.get_group(key)["used_price"] for key in keys])
-#         p_values[feature] = anova_result.pvalue
-#     return pd.Series(do_anova_on(df))
-#
-#
-# p_values_series = do_anova_on(df)
-# lowest_p_values_columns = p_values_series[p_values_series < 0.0000000001].index
-# p_values_series.apply(lambda x: "{:.3f}".format(float(x))).sort_values()
+def do_anova_on(df):
+    """
+    :param df:
+    :return: Pandas series of p_values for categorical features versus dependent feature
+    """
+
+    quali_cols = df.select_dtypes(include='object').columns
+    p_values = {}
+    for index, feature in enumerate(quali_cols):
+        grouped = df.groupby(quali_cols[index])
+        keys = list(grouped.groups.keys())
+        anova_result = f_oneway(*[grouped.get_group(key)["used_price"] for key in keys])
+        p_values[feature] = anova_result.pvalue
+    return pd.Series(do_anova_on(df))
+
+
+p_values_series = do_anova_on(df)
+lowest_p_values_columns = p_values_series[p_values_series < 0.0000000001].index
+p_values_series.apply(lambda x: "{:.3f}".format(float(x))).sort_values()
 ##
 

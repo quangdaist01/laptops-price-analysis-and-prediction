@@ -1,0 +1,27 @@
+CREATE TABLE staging_laptop
+(
+    id            VARCHAR(255),
+    name          VARCHAR(255),
+    brand         VARCHAR(255),
+    cpu_type      VARCHAR(255),
+    cpu_speed     BIGINT,
+    gpu_type      VARCHAR(255),
+    ram_type      VARCHAR(255),
+    ram           BIGINT,
+    ram_speed     BIGINT,
+    storage       VARCHAR(255),
+    screen_size   BIGINT,
+    resolution    VARCHAR(255),
+    material      VARCHAR(255),
+    os            VARCHAR(255),
+    weight        BIGINT,
+    thickness     BIGINT,
+    width         BIGINT,
+    length        BIGINT,
+    released_year BIGINT,
+    used_warranty VARCHAR(255),
+    new_warranty  VARCHAR(255),
+    new_price     BIGINT,
+    used_price    BIGINT,
+    is_sold       BOOLEAN
+);

@@ -2,16 +2,19 @@
 
 ## **Overview**
 
-In this project, we collect, preprocess and analyze the the price of second-hand laptops on [thegioididong.com](https://www.thegioididong.com/may-doi-tra/laptop). We also build a simple model to predict the price of a used laptop based on our deduced important features. The deployment of the model is at [https://tgdd-laptop-price-prediction.herokuapp.com/](https://tgdd-laptop-price-prediction.herokuapp.com/) (it’s down)
+In this project, we collect, preprocess and analyze the the price of second-hand laptops on [thegioididong.com](https://www.thegioididong.com/may-doi-tra/laptop). We also build a simple model to
+predict the price of a used laptop based on our deduced important features. The deployment of the model is
+at [https://tgdd-laptop-price-prediction.herokuapp.com/](https://tgdd-laptop-price-prediction.herokuapp.com/) (it’s down)
 
-1. Scrape all laptops’ features on [thegioididong.com](https://www.thegioididong.com/may-doi-tra/laptop) (11:35, 28/10/2021). 
-2. Data cleansing on the raw dataset 
-3. Transforming features based on the original ones 
-4. Performing EDA on the tidy dataset 
-5. Build a model to predict the second-hand prices 
+1. Scrape all laptops’ features on [thegioididong.com](https://www.thegioididong.com/may-doi-tra/laptop) (11:35, 28/10/2021).
+2. Data cleansing on the raw dataset
+3. Transforming features based on the original ones
+4. Performing EDA on the tidy dataset
+5. Build a model to predict the second-hand prices
 6. Deploy the model on a cloud platform.
 
-Our dataset contains 1234 rows and 35 features. After analyzing, we found that the most important features consist of brand, material, cpu_type, gpu_type, ram, has_touchscreen, weight, ppi. Our best model (Ridge Regression with 5th polonomial degree) achieves R2 score of 0.775 on the test set.
+Our dataset contains 1234 rows and 35 features. After analyzing, we found that the most important features consist of brand, material, cpu_type, gpu_type, ram, has_touchscreen, weight, ppi. Our best
+model (Ridge Regression with 5th polonomial degree) achieves R2 score of 0.775 on the test set.
 
 ## A little confession 😁
 
@@ -32,7 +35,8 @@ I was highly motivated when I came across this awesome [post](https://www.sspaet
 
 I love reasoning about every decision made to the system so I enjoyed (and learned) his post a lot.
 
-Based on his ideas and the core concepts in the book [Fundamentals of Data Engineering](https://www.amazon.com/Fundamentals-Data-Engineering-Robust-Systems/dp/1098108302) , I upgraded this project by the following steps:
+Based on his ideas and the core concepts in the book [Fundamentals of Data Engineering](https://www.amazon.com/Fundamentals-Data-Engineering-Robust-Systems/dp/1098108302) , I upgraded this project by
+the following steps:
 
 1. Design the architecture.
 2. Choose the tools.
@@ -44,7 +48,8 @@ And the below sections are how I did it.
 
 According to this [paper](https://www.cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf), there are 3 widely-used architecture for data platforms.
 
-Despite the complexity problem mentioned in the paper, I purposely chose the two-tier data architecture (data lake + warehouse) because I want to get hands-on experience in as many popular data tools as possible.
+Despite the complexity problem mentioned in the paper, I purposely chose the two-tier data architecture (data lake + warehouse) because I want to get hands-on experience in as many popular data tools
+as possible.
 
 With the extra complexity of connecting data lake and data warehouse, I hoped I could painfully feel what the authors had presented 😂.
 
@@ -62,11 +67,13 @@ A picture is worth a thousand words. Here are the tools I picked for this projec
 
 ### Data lake → MinIO
 
-At first, I was going to build a data system that completely fits into any local system. So I chose MinIO as it fitted my preference. But as I progressed, there was an error in which I couldn’t create a new bucket. So I had to use S3, which has the same API interface as MinIO. The setting up and migrating parts were easy.
+At first, I was going to build a data system that completely fits into any local system. So I chose MinIO as it fitted my preference. But as I progressed, there was an error in which I couldn’t create
+a new bucket. So I had to use S3, which has the same API interface as MinIO. The setting up and migrating parts were easy.
 
 ### Data warehouse → PostgreSQL
 
-I could have used ‘actual’ data warehouse, but chose PostgreSQL because I haven’t had much experience in traditional databases. Moreover, PostgreSQL is the default db for Airflow so I thought I could benefit from learning it.
+I could have used ‘actual’ data warehouse, but chose PostgreSQL because I haven’t had much experience in traditional databases. Moreover, PostgreSQL is the default db for Airflow so I thought I could
+benefit from learning it.
 
 ### ETL tool → Airflow
 
@@ -86,30 +93,37 @@ I had experience in Kubernetes before and its capacity is unimaginable (I was ab
 
 I deployed a K8s cluster using `kind` and `docker` on my Ubuntu OS wraped in VirtualBox. After doing this project, I feel like my laptop’s lifespan has shortened by a huge margin😂
 
-I also installed the Kubernetes Dashboard for better resource management and troubleshooting.
 
 Then I deployed Airflow and PosgreSQL on K8s pods.
 
-I had to make sure Airflow worker can access the databases residing on the PostgreSQL server in different pods. So I use the concepts of port-forwarding. I know there are better ways to do so. Check [here](https://github.com/quangdaist01/Real-time-people-counting-system-on-AWS-and-Confluent-Cloud).
+I had to make sure Airflow worker can access the databases residing on the PostgreSQL server in different pods. So I use the concepts of port-forwarding. I know there are better ways to do so.
+Check [here](https://github.com/quangdaist01/Real-time-people-counting-system-on-AWS-and-Confluent-Cloud).
 
-Adding the DAG files to the Airflow server on K8s was hard. It took me a while to use git-sync - a "sidecar" container in Kubernetes that helped me pull the DAGs files down from a repository (GitHub, in my case) so that I could run them on Airflow.
 
-The default Airflow [image](https://hub.docker.com/r/apache/airflow) on DockerHub doesn’t contain enough packages required in this project so I had to build one manually. Fortunately, `kind` supports loading images into my cluster. So I didn’t have to push it to DockerHub and pull it back onto the cluster, which should be a long, boring task.
 
-1. Install `docker`
-1. Install `kind`
-1. Install `helm`
-1. Install `kubectl`
-1. Install Kubernetes Dashboard
-1. Deploy Airflow on K8s
-1. Deploy PostgreSQL on K8s
-1. Create PostgreSQL in Airflow
-1. Enable git-sync in Airflow
-1. Build custom Airflow image for additional packages
+
+1. Install `docker`: [here](https://docs.docker.com/engine/install/ubuntu/#installation-methods)
+1. Install `kind`: [here](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
+1. Install `helm`: [here](https://helm.sh/docs/intro/install/)
+1. Install `kubectl`: [here](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-binary-with-curl-on-linux)
+1. Install Kubernetes Dashboard: [here](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/#deploying-the-dashboard-ui).
+   - For better resource management and troubleshooting.
+   - In order to access the dashboard UI, you have to [create a Bearer Token](https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md)
+1. Deploy Airflow on K8s: [here](https://airflow.apache.org/docs/helm-chart/stable/index.html#installing-the-chart)
+1. Enable git-sync in Airflow: [here](https://marclamberti.com/blog/airflow-on-kubernetes-get-started-in-10-mins/) 
+   - For syncing DAGs files remotely
+   - Adding the DAG files to the Airflow server on K8s was hard. It took me a while to use git-sync - a "sidecar" container in Kubernetes that helped me pull the DAGs files down from a repository (GitHub, in my case) so that I could run them on Airflow.
+1. Deploy PostgreSQL on K8s: [here](https://phoenixnap.com/kb/postgresql-kubernetes#ftoc-heading-1)
+1. Create a PostgreSQL connection in Airflow: [here](https://hevodata.com/learn/airflow-postgres-operator/#s6)
+1. Build custom Airflow image for additional packages (...): [Dockerfile]
+   - The default Airflow [image](https://hub.docker.com/r/apache/airflow) on DockerHub doesn’t contain enough packages required in this project so I had to build one manually. Fortunately, `kind` supports loading images into my cluster. So I didn’t have to push it to DockerHub and pull it back onto the cluster, which should be a long, boring task.
+1. Load custom Airflow image to the Kubernetes cluster: [here](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster)
+1. Restart the Airflow deployment: ```...```
 
 ### 1. Scrape all laptops’ features on [thegioididong.com](https://www.thegioididong.com/may-doi-tra/laptop)
 
-The main page had changed a lot in the last 2 years, so I had to update almost all CSS selectors in the code. I didn’t scrape the id of each product back then so I added one in the new script. Each second-hand laptop is now associated with a unique id.
+The main page had changed a lot in the last 2 years, so I had to update almost all CSS selectors in the code. I didn’t scrape the id of each product back then so I added one in the new script. Each
+second-hand laptop is now associated with a unique id.
 
 Then I manually uploaded the data on S3.
 
@@ -128,20 +142,21 @@ I created a DAG file containing these Tasks:
 1. Load the zip file from an S3 bucket into a dataframe
 2. Rename columns, perform data wrangling
 3. Load the dataframe into a staging table in PosgreSQL
-    
-    Make sure the Airflow server can connect to the PostgreSQL server
-    
+
+   Make sure the Airflow server can connect to the PostgreSQL server
+
 4. Load the data in the staging table into fact and dimension tables in PosgreSQL
-    
-    **Dimensional modelling**:
-    
+
+   **Dimensional modelling**:
+
     - I split the raw table into fact and dimension tables.
     - As the fact table contains foreign key constraints to the dimension tables, the loading process was like this: `Staging → Dimension tables → Fact table`
-    
-    **Change Data Capture**: 
-    
+
+   **Change Data Capture**:
+
     - I make sure that each dimensional table only contains unique values. In other words, loading the same data to dimension tables won’t result in duplicated rows.
-    - I added a column `is_sold` in the fact table to show the selling status of the second-hand laptops. New laptops coming into the fact table for the first time will have `is_sold` = `false`. If a laptop doesn’t appear in the subsequent scraped data (meaning it’s sold and removed from the page), `is_sold` will change from  `false` → `true`. Sounds magical 😮?
+    - I added a column `is_sold` in the fact table to show the selling status of the second-hand laptops. New laptops coming into the fact table for the first time will have `is_sold` = `false`. If a
+      laptop doesn’t appear in the subsequent scraped data (meaning it’s sold and removed from the page), `is_sold` will change from  `false` → `true`. Sounds magical 😮?
 5. Perform data integrity check (optional)
 
 Here is the DAG graph:
@@ -163,7 +178,8 @@ To explore the key features that affect the price of laptops, I leveraged 2 appr
 
 (unchanged)
 
-I used the features from previous steps to predict the second-hand prices. The regression models are trained using `scikit-learn` package. We trained multiple models and picked the best one based on R square metrics (after the presentation, I figured out using Adjusted R square was better).
+I used the features from previous steps to predict the second-hand prices. The regression models are trained using `scikit-learn` package. We trained multiple models and picked the best one based on R
+square metrics (after the presentation, I figured out using Adjusted R square was better).
 
 ### 5. Deploy the model on a cloud platform
 
@@ -173,7 +189,8 @@ We built a simple webpage using `Flask` (a bit of knowledge of HTML, CSS and Jav
 
 ## **Challenges and Lessons Learned**
 
-- Setting up the whole system is painful. Basic knowledge and skills of the tools are strongly required to make sure the components are connected properly and can communicate with other parts. → SaaS comes to the rescue!
+- Setting up the whole system is painful. Basic knowledge and skills of the tools are strongly required to make sure the components are connected properly and can communicate with other parts. → SaaS
+  comes to the rescue!
 - Splitting jobs and structuring Tasks in the DAGs requires experience.
 - Implementing dimensional modeling and change data capture (CDC) are only useful and fun with clear business requirements.
 - Writing efficient SQL queries is important.

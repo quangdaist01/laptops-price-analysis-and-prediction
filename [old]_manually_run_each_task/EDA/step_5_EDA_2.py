@@ -88,11 +88,17 @@ for i in range(len(quali_cols)):
                         fontdict={'size': 20})
         p_values[f'{quali_cols[i]}|{quali_cols[j]}'] = p_value
         plt.tight_layout()
-        plt.show()
+        # plt.show()
         # break
-        # plt.savefig(
-        #     f'EDA/plots results/categorical/interation between important features/{quali_cols[i]} vs '
-        #     f'{quali_cols[j]}.png',
-        #     bbox_inches='tight', dpi=250)
+        plt.savefig(
+            f'EDA/plots results/categorical/interation between important features/{quali_cols[i]} vs '
+            f'{quali_cols[j]}.png',
+            bbox_inches='tight', dpi=150)
+            # bbox_inches='tight', dpi=250)
         plt.clf()
     # break
+##
+
+
+##
+
