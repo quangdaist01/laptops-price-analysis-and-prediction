@@ -91,34 +91,29 @@ I had experience in Kubernetes before and its capacity is unimaginable (I was ab
 
 ### 0. Setting up
 
-I deployed a K8s cluster using `kind` and `docker` on my Ubuntu OS wraped in VirtualBox. After doing this project, I feel like my laptop’s lifespan has shortened by a huge margin😂
+I set up everything on an Ubuntu Guest OS on my little laptop. After doing this project, I feel like my laptop’s lifespan has shortened by a huge margin😂
 
-
-Then I deployed Airflow and PosgreSQL on K8s pods.
-
-I had to make sure Airflow worker can access the databases residing on the PostgreSQL server in different pods. So I use the concepts of port-forwarding. I know there are better ways to do so.
-Check [here](https://github.com/quangdaist01/Real-time-people-counting-system-on-AWS-and-Confluent-Cloud).
-
-
-
-
-1. Install `docker`: [here](https://docs.docker.com/engine/install/ubuntu/#installation-methods)
-1. Install `kind`: [here](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
-1. Install `helm`: [here](https://helm.sh/docs/intro/install/)
-1. Install `kubectl`: [here](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-binary-with-curl-on-linux)
-1. Install Kubernetes Dashboard: [here](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/#deploying-the-dashboard-ui).
-   - For better resource management and troubleshooting.
-   - In order to access the dashboard UI, you have to [create a Bearer Token](https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md)
-1. Deploy Airflow on K8s: [here](https://airflow.apache.org/docs/helm-chart/stable/index.html#installing-the-chart)
-1. Enable git-sync in Airflow: [here](https://marclamberti.com/blog/airflow-on-kubernetes-get-started-in-10-mins/) 
-   - For syncing DAGs files remotely
-   - Adding the DAG files to the Airflow server on K8s was hard. It took me a while to use git-sync - a "sidecar" container in Kubernetes that helped me pull the DAGs files down from a repository (GitHub, in my case) so that I could run them on Airflow.
+1. Install [`docker`](https://docs.docker.com/engine/install/ubuntu/#installation-methods)
+1. Install [`kind`](https://kind.sigs.k8s.io/docs/user/quick-start/#installation)
+1. Install [`helm`](https://helm.sh/docs/intro/install/)
+1. Install [`kubectl`](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-kubectl-binary-with-curl-on-linux)
+1. Install [Kubernetes Dashboard](https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/#deploying-the-dashboard-ui).
+    - For better resource management and troubleshooting.
+    - In order to access the dashboard UI, you have to [create a Bearer Token](https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md)
+1. Deploy [Airflow on K8s](https://airflow.apache.org/docs/helm-chart/stable/index.html#installing-the-chart)
+1. Build custom Airflow image for additional packages (pandas, s3fs): [Dockerfile](Dockerfile)
+    - The default Airflow [image](https://hub.docker.com/r/apache/airflow) on DockerHub doesn’t contain enough packages required in this project so I had to build one manually. Fortunately, `kind`
+      supports loading images into my cluster. So I didn’t have to push it to DockerHub and pull it back onto the cluster, which should be a long, boring task.
+1. Load custom Airflow image to the Kubernetes cluster: [here](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster)
+1. [Restart](https://marclamberti.com/blog/airflow-on-kubernetes-get-started-in-10-mins/#Install_dependencies_with_Airflow_on_Kubernetes) the Airflow deployment using the newly-built image
+1. Enable [git-sync in Airflow](https://marclamberti.com/blog/airflow-on-kubernetes-get-started-in-10-mins/#Deploy_your_DAGs_on_Kubernetes_with_GitSync)
+    - For syncing DAGs files remotely
+    - Adding the DAG files to the Airflow server on K8s was hard. It took me a while to use git-sync - a "sidecar" container in Kubernetes that helped me pull the DAGs files down from a repository (
+      GitHub, in my case) so that I could run them on Airflow.
 1. Deploy PostgreSQL on K8s: [here](https://phoenixnap.com/kb/postgresql-kubernetes#ftoc-heading-1)
 1. Create a PostgreSQL connection in Airflow: [here](https://hevodata.com/learn/airflow-postgres-operator/#s6)
-1. Build custom Airflow image for additional packages (...): [Dockerfile]
-   - The default Airflow [image](https://hub.docker.com/r/apache/airflow) on DockerHub doesn’t contain enough packages required in this project so I had to build one manually. Fortunately, `kind` supports loading images into my cluster. So I didn’t have to push it to DockerHub and pull it back onto the cluster, which should be a long, boring task.
-1. Load custom Airflow image to the Kubernetes cluster: [here](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster)
-1. Restart the Airflow deployment: ```...```
+    - To make sure Airflow worker can access the databases residing on the PostgreSQL server in a different pod, I use port-forwarding. There
+      are [better ways to do so](https://alesnosek.com/blog/2017/02/14/accessing-kubernetes-pods-from-outside-of-the-cluster/).
 
 ### 1. Scrape all laptops’ features on [thegioididong.com](https://www.thegioididong.com/may-doi-tra/laptop)
 
