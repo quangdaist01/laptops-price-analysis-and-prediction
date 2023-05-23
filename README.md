@@ -104,14 +104,14 @@ I set up everything on an Ubuntu Guest OS on my little laptop. After doing this 
 1. Build custom Airflow image for additional packages (pandas, s3fs): [Dockerfile](Dockerfile)
     - The default Airflow [image](https://hub.docker.com/r/apache/airflow) on DockerHub doesn’t contain enough packages required in this project so I had to build one manually. Fortunately, `kind`
       supports loading images into my cluster. So I didn’t have to push it to DockerHub and pull it back onto the cluster, which should be a long, boring task.
-1. Load custom Airflow image to the Kubernetes cluster: [here](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster)
+1. [Load custom Airflow image](https://kind.sigs.k8s.io/docs/user/quick-start/#loading-an-image-into-your-cluster) to the Kubernetes cluster: 
 1. [Restart](https://marclamberti.com/blog/airflow-on-kubernetes-get-started-in-10-mins/#Install_dependencies_with_Airflow_on_Kubernetes) the Airflow deployment using the newly-built image
 1. Enable [git-sync in Airflow](https://marclamberti.com/blog/airflow-on-kubernetes-get-started-in-10-mins/#Deploy_your_DAGs_on_Kubernetes_with_GitSync)
     - For syncing DAGs files remotely
     - Adding the DAG files to the Airflow server on K8s was hard. It took me a while to use git-sync - a "sidecar" container in Kubernetes that helped me pull the DAGs files down from a repository (
       GitHub, in my case) so that I could run them on Airflow.
-1. Deploy PostgreSQL on K8s: [here](https://phoenixnap.com/kb/postgresql-kubernetes#ftoc-heading-1)
-1. Create a PostgreSQL connection in Airflow: [here](https://hevodata.com/learn/airflow-postgres-operator/#s6)
+1. Deploy [PostgreSQL on K8s](https://phoenixnap.com/kb/postgresql-kubernetes#ftoc-heading-1)
+1. Create a [PostgreSQL connection](https://hevodata.com/learn/airflow-postgres-operator/#s6) in Airflow: 
     - To make sure Airflow worker can access the databases residing on the PostgreSQL server in a different pod, I use port-forwarding. There
       are [better ways to do so](https://alesnosek.com/blog/2017/02/14/accessing-kubernetes-pods-from-outside-of-the-cluster/).
 
